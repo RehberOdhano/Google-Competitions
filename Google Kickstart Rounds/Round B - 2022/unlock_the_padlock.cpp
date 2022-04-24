@@ -16,38 +16,41 @@ ll solve(vector<ll>dials, ll n, ll d) {
 			break;
 		}
 		else if(dials[i] == 0 && max != 0) {
-			int start = i, end = i;
-			for(int j = i+1; j < n; j++) {
-				if(dials[j] == 0) end = j;
+			if(i == 0) dials[i] = 1;
+			else {
+				int start = i, end = i;
+				for(int j = i+1; j < n; j++) {
+					if(dials[j] == 0) end = j;
+					else break;
+				}
+				if(start == end) dials[i] = 1;
+				else fill_n(dials.begin()+start, end, 1); 
+				min_op++;
+			}
+		}
+		else if((d-1) == 1 && max == 1 && dials[i] == 1) continue;
+		else if(max != (d - 1)) {
+			int start = find(dials.begin(), dials.end(), max) - dials.begin();
+			int end = start;
+			for(int j = start+1; j < n; j++) {
+				if(j > (n-1)) break;
+				if(dials[j] == max) end = j;
 				else break;
 			}
-			if(start == end && start == 0) dials[i] = 1;
-			else {
-				fill_n(dials.begin()+start, end, 1); 
-				min_op++;
-			}
-		}
-		else if(max == 1 && max == (d-1) && dials[i] == 1) continue;
-		else if(max == (d - 1)) {
-			int max_index = find(dials.begin(), dials.end(), max) - dials.begin();
-			int end = max_index;
-			for(int j = max_index; j < n; j++) {
+			if(start == end) dials[start]--;
+			else fill_n(dials.begin()+start, end, dials[start]-1);
+			min_op++; 
+		} else {
+			int start = find(dials.begin(), dials.end(), max) - dials.begin();
+			int end = start;
+			for(int j = start+1; j < n; j++) {
+				if(j > (n-1)) break;
 				if(dials[j] == max) end = j;
+				else break;
 			}
-			fill_n(dials.begin()+max_index, end, 1);
-			min_op++;
-		}
-		else if(max != (d - 1)) {
-			while(max != min) {
-				int max_index = find(dials.begin(), dials.end(), max) - dials.begin();
-				int end = max_index;
-				for(int j = max_index; j < n; j++) {
-					if(dials[j] == max) end = j;
-				}
-				fill_n(dials.begin()+max_index, end, dials[max_index]-1);
-				min_op++;
-				max = *max_element(dials.begin(), dials.end());
-			}
+			if(start == end && dials[start] == (d-1)) dials[start] = 1;
+			else fill_n(dials.begin()+start, end, 1);
+			min_op += 2;
 		}
 	}
 	
